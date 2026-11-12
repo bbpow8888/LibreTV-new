@@ -442,19 +442,35 @@ function renderRecommend(tag, pageLimit, pageStart) {
 }
 
 async function fetchDoubanData(url) {
-    // 添加超时控制
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
-    
-    // 设置请求选项，包括信号和头部
-    const fetchOptions = {
-        signal: controller.signal,
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-            'Referer': 'https://movie.douban.com/',
-            'Accept': 'application/json, text/plain, */*',
+    // 使用多路免封锁代理轮询，彻底绕过豆瓣 418 拦截
+    const proxyList = [
+        `https://allorigins.win{encodeURIComponent(url)}`,
+        `https://codetabs.com{encodeURIComponent(url)}`,
+        `https://corsproxy.io{encodeURIComponent(url)}`
+    ];
+
+    for (const proxyUrl of proxyList) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+            
+            const response = await fetch(proxyUrl, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data && (data.subjects || data.tags)) {
+                    return data;
+                }
+            }
+        } catch (err) {
+            console.warn("当前代理尝试失败，切换下一个：", proxyUrl);
         }
-    };
+    }
+
+    throw new Error("所有豆瓣代理线路均请求失败");
+}
+
 
     try {
         // 尝试直接访问（豆瓣API可能允许部分CORS请求）
@@ -528,7 +544,9 @@ function renderDoubanCards(data, container) {
             const posterUrl = item.cover;
             
             // 2. 也准备代理URL作为备选
+            // 把原来的那一行删掉，换成下面这行：
             const proxiedCoverUrl = originalCoverUrl ? `https://baidu.com{encodeURIComponent(originalCoverUrl)}` : '';
+
 
             
             // 为不同设备优化卡片布局
