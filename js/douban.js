@@ -528,7 +528,8 @@ function renderDoubanCards(data, container) {
             const posterUrl = item.cover;
             
             // 2. 也准备代理URL作为备选
-            const posterUrl = item.cover ? `https://weserv.n1{encodeURIComponent
+            const proxiedCoverUrl = originalCoverUrl ? `https://baidu.com{encodeURIComponent(originalCoverUrl)}` : '';
+
             
             // 为不同设备优化卡片布局
             card.innerHTML = `
