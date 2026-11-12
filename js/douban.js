@@ -317,7 +317,8 @@ card.className = "bg-[#111] hover:bg-[#222] transition-all duration-300 rounded-
 const safeTitle = item.title.replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
 const safeRate = (item.rate || "暂无").replace(/</g, '<').replace(/>/g, '>');
 const originalCoverUrl = item.cover || '';
-const proxiedCoverUrl = originalCoverUrl ? https://baidu.com{encodeURIComponent(originalCoverUrl)} : '';
+const cleanUrl = originalCoverUrl.replace(/^https?:\/\//, '');
+const proxiedCoverUrl = cleanUrl ? `https://wp.com{cleanUrl}` : '';
 card.innerHTML = <div class="relative w-full aspect-[2/3] overflow-hidden cursor-pointer" onclick="fillAndSearchWithDouban('${safeTitle}')"> <img src="${proxiedCoverUrl}" alt="${safeTitle}"  class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.onerror=null; this.src='${originalCoverUrl}';" loading="lazy" referrerpolicy="no-referrer"> <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"></div> <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded-sm"> <span class="text-yellow-400">★</span> ${safeRate} </div> <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-sm hover:bg-[#333] transition-colors"> <a href="${item.url}" target="_blank" rel="noopener noreferrer" title="在豆瓣查看" onclick="event.stopPropagation();">🔗</a> </div> </div> <div class="p-2 text-center bg-[#111]"> <button onclick="fillAndSearchWithDouban('${safeTitle}')"  class="text-sm font-medium text-white truncate w-full hover:text-pink-400 transition" title="${safeTitle}"> ${safeTitle} </button> </div>;
 fragment.appendChild(card);
 });
