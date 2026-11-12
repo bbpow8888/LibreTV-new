@@ -544,10 +544,7 @@ function renderDoubanCards(data, container) {
             const posterUrl = item.cover;
             
             // 2. 也准备代理URL作为备选
-            // 把原来的那一行删掉，换成下面这行：
             const proxiedCoverUrl = originalCoverUrl ? `https://baidu.com{encodeURIComponent(originalCoverUrl)}` : '';
-
-
             
             // 为不同设备优化卡片布局
             card.innerHTML = `
