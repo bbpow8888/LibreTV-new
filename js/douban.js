@@ -528,7 +528,7 @@ function renderDoubanCards(data, container) {
             const posterUrl = item.cover;
             
             // 2. 也准备代理URL作为备选
-            const posterUrl = item.cover ? `https://weserv.n1{encodeURIComponent;
+            const posterUrl = item.cover ? `https://weserv.n1{encodeURIComponent
             
             // 为不同设备优化卡片布局
             card.innerHTML = `
